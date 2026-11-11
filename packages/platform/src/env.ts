@@ -40,6 +40,7 @@ export { MIN_SECRET_LENGTH };
  *  - TURNSTILE_SECRET_KEY;
  *  - PLATFORM_PROXY_SECRET (the site routers sign the client IP and host with it), PLATFORM_HASH_KEY
  *    and PLATFORM_SESSION_SECRET, each at least 32 characters;
+ *  - LEAK_LABEL_KEY of at least 32 bytes (the leak guard's keyed labels, packages/core guard.ts);
  *  - NETWORK_DATABASE_URL or DATABASE_URL;
  *  - review mode human (NETWORK_REVIEW_MODE, when set, must be "human");
  *  - no dev-only switch (PLATFORM_DEV_*).
@@ -54,6 +55,7 @@ export function bootConfigProblems(env: Env = process.env): string[] {
     otpProblems: e === "" || e === "dev" ? [] : otpConfigProblems(env),
     turnstileSecret: env.TURNSTILE_SECRET_KEY ?? "",
     proxySecret: env.PLATFORM_PROXY_SECRET ?? "", hashKey: env.PLATFORM_HASH_KEY ?? "", sessionSecret: env.PLATFORM_SESSION_SECRET ?? "",
+    leakKeyBytes: new TextEncoder().encode(env.LEAK_LABEL_KEY ?? "").length,
     networkDatabaseUrl: env.NETWORK_DATABASE_URL ?? "", databaseUrl: env.DATABASE_URL ?? "",
     reviewModeSet: env.NETWORK_REVIEW_MODE !== undefined, reviewMode: env.NETWORK_REVIEW_MODE ?? "",
     envKeys: keys, envValues: keys.map(k => env[k] ?? ""),
