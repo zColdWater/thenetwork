@@ -54,7 +54,7 @@ import { Accounts, homeCityOf, RECYCLED_AFTER_MS, type AccountHooks, type HomeIn
 import { joinAgeCheck } from "../../platform/src/age.ts";
 import { detectKeyword as platformKeyword, keywordEvent, leaveTarget, resolveConsent, stopScope, type StopScope } from "../../platform/src/consent.ts";
 import { accountEligible, accountFreeReply, collectGate, contextWanted, effectiveAge, isScheduled, joinAgeUsable, joinStep, keepsMember, mayEnroll, numberAllowed, receiptAction, receiptStatus, recordedAge, replyKindOf, sendRefusal, startOutcome, stateUnchanged, stopHintDue, stopScopeOf, storedTurnAdmitted, turnDecision, type ConsentState, type JoinFacts, type ReceiptOutcome, type StartOutcome, type TurnFacts } from "./decisions.ts";
-import { devShortcutsAllowed, isProduction, platformEnv, type Env } from "../../platform/src/env.ts";
+import { devShortcutsAllowed, isProduction, MIN_SECRET_LENGTH, platformEnv, type Env } from "../../platform/src/env.ts";
 import { keyedHash, maskPhone, normalizePhone, safeEqual } from "../../platform/src/phone.ts";
 import { PgPeopleStore } from "../../platform/src/pg-store.ts";
 import type { Membership, PeopleStore, PendingText, Person } from "../../platform/src/store.ts";
@@ -348,7 +348,10 @@ export class NetworkService implements RuntimeHost {
     const key = this.env.PLATFORM_HASH_KEY ?? (devShortcutsAllowed(this.env) ? DEV_HASH_KEY : undefined);
     if (!key) throw new Error("PLATFORM_HASH_KEY is required in production and outside PLATFORM_ENV=dev");
     this.hashKey = key;
-    try { this.tokens = parseTokenGrants(o.tokens, { explicitApp: isProduction(this.env) }); } catch (e) { throw new Error(String((e as Error).message).replace("OBSERVATORY_TOKENS", "NETWORK_SERVICE_TOKENS")); }
+    // Outside dev a staff bearer is at least 32 characters, as the Observatory's (W3-457).
+    const minLength = devShortcutsAllowed(this.env) ? undefined : MIN_SECRET_LENGTH;
+    try { this.tokens = parseTokenGrants(o.tokens, { explicitApp: isProduction(this.env), minLength }); } catch (e) { throw new Error(String((e as Error).message).replace("OBSERVATORY_TOKENS", "NETWORK_SERVICE_TOKENS")); }
+    if (minLength && this.consoleToken && this.consoleToken.length < minLength) throw new Error(`NETWORK_SERVICE_CONSOLE_TOKEN must be at least ${minLength} characters`);
     // Cloud holds the turn secret; it must never also be a staff bearer (PR #4: the agent credential was never the console token).
     const turnSecret = this.env.SERVICE_TURN_SECRET;
     if (turnSecret && [...this.tokens.keys(), ...(this.consoleToken ? [this.consoleToken] : [])].some(t => safeEqual(t, turnSecret))) {

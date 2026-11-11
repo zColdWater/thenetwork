@@ -31,4 +31,12 @@ describe.skipIf(!pgAvailable)("the service boot checks", () => {
       await asOwner(sql => sql`insert into platform.settings (key, value) values ('environment', 'dev') on conflict (key) do update set value = 'dev'`);
     }
   }, 60_000);
+
+  test("W3-457: a staging service refuses a staff token or a console token shorter than 32 characters", () => {
+    const staging = { PLATFORM_ENV: "staging", PLATFORM_HASH_KEY: KEY };
+    const long = "t".repeat(32);
+    expect(() => service(staging, { tokens: "reviewer@*:abcdefghij" })).toThrow(/NETWORK_SERVICE_TOKENS: a token is shorter than 32/);
+    expect(() => service(staging, { tokens: `admin@*:${long}`, consoleToken: "abcdefghij" })).toThrow(/NETWORK_SERVICE_CONSOLE_TOKEN.*32/);
+    expect(() => service(staging, { tokens: `admin@*:${long}`, consoleToken: long })).not.toThrow();
+  });
 });
