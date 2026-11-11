@@ -48,6 +48,8 @@ export interface BootFacts {
   proxySecret: string;
   hashKey: string;
   sessionSecret: string;
+  /** The length of LEAK_LABEL_KEY in UTF-8 bytes (the unit of setLeakLabelKey in packages/core guard.ts). */
+  leakKeyBytes: number;
   networkDatabaseUrl: string;
   databaseUrl: string;
   /** True when NETWORK_REVIEW_MODE is set, also when it is set to "". */
@@ -95,6 +97,7 @@ function deployedReady(f: BootFacts): boolean {
   //@ requires f.envKeys.length === f.envValues.length
   return f.otpProblems.length === 0 && f.turnstileSecret !== ""
     && f.proxySecret.length >= MIN_SECRET_LENGTH && f.hashKey.length >= MIN_SECRET_LENGTH && f.sessionSecret.length >= MIN_SECRET_LENGTH
+    && f.leakKeyBytes >= MIN_SECRET_LENGTH
     && (f.networkDatabaseUrl !== "" || f.databaseUrl !== "")
     && (!f.reviewModeSet || f.reviewMode === "human")
     && devSwitchProblems(f.envKeys, f.envValues, 0).length === 0;
@@ -104,7 +107,7 @@ function deployedReady(f: BootFacts): boolean {
  * What a process is missing before it may start, one line per problem; empty when it may start.
  * Fail closed: an environment that is not declared, or dev that says production, never starts. A
  * production or staging process needs the OTP provider, Turnstile, the three secrets of at least 32
- * characters, a database, review mode human (when set), and no dev-only switch. Dev needs nothing more.
+ * characters, LEAK_LABEL_KEY of at least 32 bytes, a database, review mode human (when set), and no dev-only switch. Dev needs nothing more.
  */
 export function bootProblems(f: BootFacts): string[] {
   //@ verify
@@ -123,6 +126,7 @@ export function bootProblems(f: BootFacts): string[] {
     .concat(secretProblem("PLATFORM_PROXY_SECRET", f.proxySecret))
     .concat(secretProblem("PLATFORM_HASH_KEY", f.hashKey))
     .concat(secretProblem("PLATFORM_SESSION_SECRET", f.sessionSecret))
+    .concat(problem(f.leakKeyBytes < MIN_SECRET_LENGTH, "LEAK_LABEL_KEY (at least 32 bytes)"))
     .concat(problem(f.networkDatabaseUrl === "" && f.databaseUrl === "", "NETWORK_DATABASE_URL or DATABASE_URL"))
     .concat(problem(f.reviewModeSet && f.reviewMode !== "human", "NETWORK_REVIEW_MODE=human (got " + f.reviewMode + ")"))
     .concat(devSwitchProblems(f.envKeys, f.envValues, 0));

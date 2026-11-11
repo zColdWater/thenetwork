@@ -84,7 +84,7 @@ export const MAX_PUBLIC_BODY_BYTES = 9 * 1024 * 1024;
 /** Reads and checks the environment. Fails closed: a deployed environment without its secrets does not start. */
 export function loadConfig(e: Env = process.env, argv: string[] = []): BackendConfig {
   // The proved boot gate first (env-core.ts bootProblems): it refuses PLATFORM_ENV=dev with NODE_ENV=production,
-  // and a deployed environment without the OTP provider, Turnstile, the three secrets, a database, review
+  // and a deployed environment without the OTP provider, Turnstile, the three secrets, LEAK_LABEL_KEY, a database, review
   // mode human or with a dev-only switch. The checks below are the backend's own (Q-boot_config-W4-1).
   const env = assertBootConfig(e);
   const isolatedRoute = networkRoutePolicy(e);
@@ -102,9 +102,8 @@ export function loadConfig(e: Env = process.env, argv: string[] = []): BackendCo
   if (deployed && migrationUrl && databaseUrl && migrationUrl === databaseUrl) throw new Error("MIGRATION_DATABASE_URL must be a different login from the service's NETWORK_DATABASE_URL");
   if (missing.length) throw new Error(`PLATFORM_ENV=${env} needs ${missing.join(", ")}`);
   for (const [k, v] of [["PLATFORM_PROXY_SECRET", proxySecret], ["PLATFORM_PROXY_SECRET_PREVIOUS", proxySecretPrevious]] as const) if (v && v.length < SECRET_MIN) throw new Error(`${k} must be at least ${SECRET_MIN} characters`);
-  // The leak guard's log labels are keyed in staging and production (core-6); dev and sims stay unkeyed and reproducible.
+  // The leak guard's log labels are keyed in staging and production (core-6; the boot gate requires the key); dev and sims stay unkeyed and reproducible.
   const leakLabelKey = deployed ? e.LEAK_LABEL_KEY : undefined;
-  if (deployed && (!leakLabelKey || new TextEncoder().encode(leakLabelKey).length < SECRET_MIN)) throw new Error(`PLATFORM_ENV=${env} needs LEAK_LABEL_KEY of at least ${SECRET_MIN} bytes`);
 
   const warnings: string[] = [];
   const num = (name: string, v: string | undefined, dflt: number) => {
