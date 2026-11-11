@@ -516,9 +516,10 @@ export class NetworkService implements RuntimeHost {
     }
     if (missing.length) throw new Error(`the database is missing ${missing.join(", ")}: run bun run db:migrate (runbook-real 1.1, runbook-platform)`);
     // The database and the process must agree on the environment (the 555-01xx guard reads the database's).
+    // A missing row agrees with nothing: that guard would be off (Q-boot_config-W4-2).
     const declared = platformEnv(this.env);
     const [envRow] = await this.sql`select value from platform.settings where key = 'environment'`;
-    if (declared && envRow && envRow.value !== declared) throw new Error(`PLATFORM_ENV is ${declared} but platform.settings.environment is ${envRow.value}: fix one of them`);
+    if (declared && envRow?.value !== declared) throw new Error(`PLATFORM_ENV is ${declared} but platform.settings.environment is ${envRow ? envRow.value : "missing"}: fix one of them`);
     const injected = this.relayClassifier;
     this.relayHookFor = injected ? () => injected : relayClassifierFromEnv(this.env, this.log, this.cost);
     for (const rt of this.runtimes.values()) await rt.start();
