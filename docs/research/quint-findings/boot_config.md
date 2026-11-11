@@ -5,9 +5,72 @@ Model: [quint/boot_config.qnt](../../../quint/boot_config.qnt). Module plan: sec
 of this model is [audit-boot_config.md](../state-machines/wave3/audit-boot_config.md).
 This file is hand-written. The check results are copied from the commands named with them.
 
-## Wave 4
+## Wave 4, after the fixes (final state)
 
-### What the model has now
+Compared with the code at b5f026d (branch wave4/boot_config, the five fix commits on e4f0a32).
+
+The model now follows the fixed code. `safety` holds (all 18 invariants), every witness is reachable,
+and the run tests replay the fixed traces. The section "Wave 4" below is the model as it was before the
+fixes; its counterexamples are the defects that the fix commits close.
+
+### Items after the fixes
+
+| Item | Result | Commit | Test that failed before the fix | Model change |
+|---|---|---|---|---|
+| Q-boot_config-W4-1 | fixed | 3ef93b6 | deploy/backend/boot-config-w4.integration.test.ts "Q-boot_config-W4-1: server.ts refuses PLATFORM_ENV=dev with NODE_ENV=production" | `loadConfigOk` is now `bootOk` and the backend's own checks (a database in every environment, the migration login, the proxy secret length in every environment); the duplicate deployed checks are gone. Run tests `loadConfigGateTest`, `backendDevProductionTest` (server.ts, main.ts, platform-dev.ts and the MCP dev server all refuse dev that says production) and `backendIgnoresReviewModeTest` (server.ts refuses NETWORK_REVIEW_MODE=auto and a PLATFORM_DEV_* switch). |
+| Q-boot_config-W4-2 | fixed | 8935589 | packages/network/test/boot-config-w4.integration.test.ts "Q-boot_config-W4-2: a staging service refuses to start when platform.settings has no environment row" | `serviceRefusal` refuses `db_env` when the row is missing (`dbEnv != declared(c)`, service.ts:523-525). Run test `missingEnvRowTest` (production on server.ts and dev on main.ts both refuse). |
+| Q-boot_config-W4-3 | fixed | ab19a16 | deploy/backend/boot-config-w4.integration.test.ts "Q-boot_config-W4-3: main.ts refuses production without LEAK_LABEL_KEY, and with a superuser service login" | `deployedReady` has `leakBytes >= 32` (env-core.ts:100, BootFacts.leakKeyBytes); `startedDeployedIsReady` names the same rule (env.ts comment). `mainDbUrl` refuses `service_login` outside dev (main.ts:39-45). Run test `mainProductionNoLeakKeyTest`. |
+| W3-457 | fixed | d49a578 | packages/network/test/boot-config-w4.integration.test.ts "W3-457: a staging service refuses a staff token or a console token shorter than 32 characters" | `serviceRefusal` refuses `staff_token` and `console_token` outside dev, after the hash key (service.ts:352-354). Run test `shortStaffTokenTest` (production staff token, staging console token refused; dev accepts both). |
+| W3-458 | fixed | b5f026d | deploy/backend/boot-config-w4.integration.test.ts "W3-458: main.ts takes DATABASE_URL when NETWORK_DATABASE_URL is empty, as the gate does" | `mainDbUrl` refuses only when no URL is set (`||`, main.ts:36-37). Run test `mainBlankDbUrlTest` (the process comes up). |
+| W3-344, W3-448, W3-450 to W3-456 | modelled | (wave 4 model commit 770c336) | none (model items) | No change in meaning. W3-448: the two gates now differ only by the backend's own extra checks. |
+
+Not reproduced: none. Skipped: none. `availabilityAfterDrop` (W3-344, M-148) stays outside `safety`, with
+its reason in the model and below: a check needs a new deploy-process feature (founder approval only).
+
+### Model changes that are not fixes
+
+- ASSUMPTION (new, in the header): the owner edits the platform.settings environment row only while no
+  process runs; `editEnvRow` has the guard `not(started)`. With the missing-row fix, the only trace left
+  for `upDbAgrees` was an owner edit while the service is up. The service logins can only read the row
+  (migration 0004:163 grant select, 0007:237 revoke update), start() checks it once, and an owner edit
+  changes the 555-01xx guard at once whatever the process does, so no process check can see it.
+- Sampling only (the reachable configurations do not change): `configureNear` starts from READY with
+  PLATFORM_DB_ENVIRONMENT_INIT=1 and a free main.ts bind, its option k=2 varies the staff token or the
+  console token, and k=8 varies the turn route and the turn secret; half of the `editEnvRow` choices set
+  the row to the declared environment. Before the fixes a missing row let a deployed service come up
+  easily; after them the simulator needs these weights to reach the deployed services that the
+  mutation probes below need.
+
+### Mutation probes after the fixes
+
+Copies of the fixed model in the session scratchpad, each with one fix taken back out and `--invariant`
+on one value (`quint run --backend rust --seed 0x5eed --max-steps 20 --max-samples 3000`). The copies were
+deleted.
+
+| Probe | Fix taken out | Value | Result |
+|---|---|---|---|
+| M5 | a missing environment row passes start() (W4-2) | `upDbAgrees` | violated |
+| M6 | no staff token length check (W3-457) | `upLiveStaffTokensLong` | violated |
+| M6b | no console token length check (W3-457) | `upLiveStaffTokensLong` | violated |
+| M7 | loadConfig without the gate (W4-1) | `startedDevNotProduction` | violated |
+| M8 | main.ts without the service-login check (W4-3) | `upLiveServiceLogin` | violated with `--max-samples 30000` (not found at 3000: it needs five specific steps; `mainProductionNoLeakKeyTest` replays it, and Apalache covers it within 8 steps) |
+| M9 | bootProblems without LEAK_LABEL_KEY (W4-3) | `upLiveLeakKeyed` | violated |
+| M10 | main.ts with `??` (W3-458) | `mainDbMatchesGate` | violated |
+
+### Checks after the fixes
+
+- `bun run quint:check quint/boot_config.qnt` (header bounds max-steps 20, max-samples 3000): typecheck ok,
+  test ok (21 run tests), all 14 witnesses reachable, `safety` ok. 33 s wall time on the shared machine
+  (`safety` alone 14 s to 20 s).
+- `bun run quint:check --verify quint/boot_config.qnt` (Apalache, verify-steps 8, the default): all checks ok, `verify safety` ok in 468 s (8 min). The verify-steps bound is not lowered.
+- `bun test --conditions eliza-source --timeout 120000 deploy/backend/boot-config-w4.integration.test.ts
+  packages/network/test/boot-config-w4.integration.test.ts`: 5 pass, 0 fail.
+
+## Wave 4, before the fixes
+
+This section is the model at commit 770c336, before the fix commits. The section above is the final state.
+
+### What the model had
 
 Part A, the process (four entry points, each with the gate its code runs now):
 
