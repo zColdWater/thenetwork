@@ -33,7 +33,7 @@ async function main() {
   const env = assertBootConfig();
   const once = process.argv.includes("--once");
   const dryRun = process.argv.includes("--dry-run") || !!networkRoutePolicy(process.env);
-  const url = process.env.NETWORK_DATABASE_URL ?? process.env.DATABASE_URL;
+  const url = process.env.NETWORK_DATABASE_URL || process.env.DATABASE_URL;
   if (!url) throw new Error("set NETWORK_DATABASE_URL (or DATABASE_URL) to the Postgres with the network and platform schemas (bun run db:migrate)");
   // Staging and production: RLS and the grants must apply to the service login, as deploy/backend/server.ts checks (Q-boot_config-W4-3).
   if (env !== "dev") {

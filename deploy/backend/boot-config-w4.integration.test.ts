@@ -56,4 +56,12 @@ describe.skipIf(!pgAvailable)("boot gates of the process entries", () => {
     expect(superuser.code).toBe(1);
     expect(superuser.logs).toMatch(/refusing to start.*superuser/);
   }, 90_000);
+
+  test("W3-458: main.ts takes DATABASE_URL when NETWORK_DATABASE_URL is empty, as the gate does", async () => {
+    const url = await migratedDb("bootw4_blankurl");
+    urls.push(url);
+    const r = await run(["packages/network/service/main.ts", "--once", "--dry-run"], { PLATFORM_ENV: "dev", NETWORK_DATABASE_URL: "", DATABASE_URL: url });
+    expect(r.logs).not.toMatch(/set NETWORK_DATABASE_URL/);
+    expect(r.code).toBe(0);
+  }, 60_000);
 });
