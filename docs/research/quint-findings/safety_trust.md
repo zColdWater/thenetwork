@@ -175,3 +175,97 @@ wanted behaviour.
 
 The liveness item of the plan ("every hold reaches a staff decision") is not checked: the simulator and
 Apalache check state invariants only.
+
+## 5. Wave 4
+
+Plan: [docs/research/2026-11-07-state-machines.md](../2026-11-07-state-machines.md) section 9.6 (`safety_trust`, P0,
+19 items). The model now follows the code at e4f0a32. File and line references below are at e4f0a32. This
+section is hand-written; the traces are the model's `run` tests (`quint test`, seed `0x5eed`).
+
+### 5.1 What changed in the model
+
+| Item | Kind | What the model does now |
+|---|---|---|
+| W3-218 | defect (confirmed) | `disclose(k, app, p, meant, kind, pronoun)` takes the member's NEWEST done 1:1 date in the 7-day window (network.ts:2859-2862) and files against its other person. Ghost `meant` is the person the member talks about. New rule `reportSubjectMeant` (in `safety`): fails. Trace `w3_218LateDisclosureNewestDateTest`. |
+| W3-219 | defect (confirmed) | The gate is `pronoun or names the partner` (ABOUT_SOMEONE, network.ts:346, 2867); the reader of the later text is free. `meant = "boss"` (not a member) still files. `checkInReportIntended` fails. Trace `w3_219VentingTest`. |
+| W3-220 | defect (confirmed) | The routed app of a disclosure and of the answer to "Who do you mean?" is an oracle over the member's apps (service.ts:1085-1135: only block/report texts use safetyTargetAt). New actions: the `discloseLost` branch of `disclose`, and `answerWhoElsewhere`. `everyMetReportFiled` fails. Traces `w3_220DisclosureRoutedElsewhereTest`, `w3_220WhoAnswerRoutedElsewhereTest`. |
+| W3-221 | defect (confirmed) | `leave` is two steps: `leaveStart` (readState(safetyHeld) and the carry-over row) and `leaveFinish` (forgetMember), service.ts:921-930. `urgentMetReportBlocksMatchingInApp` fails. Trace `w3_221LeaveRaceTest`. The atomic `leave` stays for the old run tests only. |
+| W3-223 | defect (confirmed) | `ban` is `banStart` (ban rows) and one `banApply` unit per app, with `crash` between them and a retry when a member is not restricted (service.ts:2014-2046). New rule `bannedNeverMatchable` (in `safety`): fails. Trace `w3_223BanStoppedTest`. |
+| W3-224 | model error | The late path has a free reader and a free "meant" person, and no `inWindow == Set(k)` guard, so `checkInReportIntended` can fail (it does, `w3_219VentingTest`). The direct check-in answer keeps the reader assumption as the named `checkInReaderSound` (the corpus gate checks it, SD-067). |
+| W3-225 | model error | Slot: the record has the New York hour and the slot that slotOf reads in UTC (`slotUTC`); `slotFromMeeting` compares it with `slotNY` and fails for 8 pm and 2 pm (`w3_237SlotZoneTest`). Notice kind: `holdNoticeKind` calls `outboundKind` (decisions.ts:109). Mutation: without the `safetyMeta` branch, `sd475HoldNoticeKindTest` fails (`safetyNoticeImmediate` is false). No-show: the record's `by` comes from `recordOf`; a mutation that names the other person was run (5.3). |
+| W3-226 | model error | `staffHeldP` is a set of (person, "*" or app). A lift removes (p, app); a lift by safety@* staff turns (p, "*") into the other apps; a lift by staff of one app never removes (p, "*"). `staffHoldFollowsPerson` checks each scope. |
+| W3-228 | model error | Already in the model: the lift ends the case as "lifted" (`liftUnitOf`). No change. |
+| W3-229 | gap | `invitedBy` (cy@slop was invited by ana@slop) and `invitesBlockedUntil`. `addPts` adds `invitee_held` (+1, 30 days without invites) to the inviter when the invitee reaches hold (network.ts:1266-1272). `noSingleActorHold` still passes across the chain (`w3_229InviterTest`). The model has one link; production never writes `invited_by` (runtime.ts:588). |
+| W3-230 | gap | `Trust.blocksMade` and the 14-day window of trust.ts:99-106; +2 fires each time the window holds exactly 3; credibility comes back after 14 days (`credibleT(t, now)`). `w3_230BlockWindowTest`. |
+| W3-231 | gap | `staffHoldBy(m, scope, onlyRep)`: per-app staff write (p, app) and hold one app; a hold with a report id marks only that report (network.ts:1421-1427). After a lift the other open urgent report still holds the member (`w3_231ReportIdHoldTest`): over-holding, not a safety defect. `liftHold` is three steps (5.2). A `not_on_hold` lift still deletes the rows: the staff wanted the lift, so the model treats the transaction as the staff decision. |
+| W3-232 | gap | Crash points: `crash` now stops a ban loop, a clear-minor loop (`clearMinorStart`/`clearMinorApply`, service.ts:1977-2003), a leave and a lift. A probing stage: `bookDateAt(..., probe = true)` and `confirm`; `dropOpps` and `callOffPair` close probing items (network.ts:482, 1532-1545, 2756-2778); `blockClosesAllApps` covers probing items (`w3_232ProbingBlockTest`). Relay `ageSignal`: `relaySend(..., ageSig)` keeps the ghost `ageSignals`; nothing reads the flag. New rule `relayAgeSignalReachesAgePolicy` (in `safety`): fails (`w3_232RelayAgeSignalTest`). Relay holds write no case: they go to the staff relay queue, so the model keeps no rule for them. |
+| W3-234 | carve-out (NEW-2) | Re-checked: network.ts:999 still blanks `reporterId` on forget, and service.ts:1797 `liftHold` still does not read the ban. In scope (security). `reporterStandingKept` moved into `safety`: fails (`new2HeldReporterLeavesTest`, `w3_234BannedReporterLiftedTest`). |
+| W3-235 | carve-out (SD-027) | The visibility part and the stranger-block part are in scope. `engineHoldVisible` moved into `safety`, and the new `strangersCannotEngineHold` (trust_review by blocks needs two blockers who met the member; profile.ts:277 counts every block) is in `safety`. Both fail (`sd027TrustReviewTest`). `staffDecisionEndsEngineHold` stays out (the staff exit needs the founder). |
+| W3-236 | carve-out (SD-074) | The minor part is founder decision 1 (age is person-level, minors never matched in any app). `minorSignalFollowsPerson` moved into `safety`: fails (`sd074MinorReportOneAppTest`). `autoHoldFollowsPerson` and `urgentMetReportBlocksMatching` stay out (founder decision). |
+| W3-237 | carve-out | SD-442 remainder: modelled (W3-225), `slotFromMeeting` fails. SD-254 remainder: the relay ageSignal part is modelled (W3-232). SD-253 (`pastContactsToldOfBan`, new member copy) and NEW-3 (`blockLeavesOthersPlan`, which member leaves a booked plan) still need the founder and stay out of `safety`. |
+| W3-435 | gap | The lift writes one row per other live app before it deletes "*" (`liftTxOf`). A held person's member on another app reads a covering row until staff of that app lift it (`w3_435LiftKeepsOtherAppsTest`, `staffHoldFollowsPerson`). |
+| W3-644 | defect (confirmed) | `liftStart` reads the "*" row and checks the role, `liftTx` deletes (p, app) and (p, "*") and writes the per-app rows only from the old read, `liftUnit` lifts. `staffHoldFollowsPerson` fails. Trace `w3_644LiftRaceTest`. |
+
+### 5.2 Counterexamples (code defects)
+
+Each trace is a `run` test in the model. Members: ana, ben, cy; `@slop`, `@peon`; `g1` is a rejoin.
+
+1. **W3-218** (network.ts:2859-2871). `bookDate(o1, slop, ana, cy)`, `meet(o1)`, `checkIn(o1, ana, fine)`, `tick(1)`,
+   `bookDate(o2, slop, ana, ben)`, `meet(o2)`, `checkIn(o2, ana, fine)`, `disclose(o2, slop, ana, meant = cy,
+   harassment, pronoun)` -> a check-in report ana -> ben, a person block (ana, ben), ben out of matching; cy
+   matchable. `reportSubjectMeant` and `everyMetReportFiled` are false.
+2. **W3-219** (network.ts:346, 2867). A done date ana-ben, `checkIn(fine)`, `tick(1)`, `disclose(o1, slop, ana,
+   meant = boss, harassment, pronoun)` -> report ana -> ben (harassment, met), block, ben held.
+   `checkInReportIntended` is false.
+3. **W3-644** (service.ts:1800-1812). `staffHoldBy(ana@slop, slop)`, `liftStart(ana@slop, slop)` (no "*" row),
+   `staffHoldBy(ana@peon, *)`, `staffHoldApply(ana@slop)`, `liftTx` (deletes (ana, *) with no per-app rows),
+   `liftUnit` -> ana@slop is ok and matchable, no person_holds row for ana. `staffHoldFollowsPerson` is false.
+4. **W3-221** (service.ts:921-930). `bookDate(o1, slop, ana, ben)`, `leaveStart(slop, ben)` (safetyHeld = false),
+   `report(ana -> ben, harassment)`, `leaveFinish(ben@slop)`, `join(slop, ben)` -> ben@slop g1 matchable, not
+   covered. `urgentMetReportBlocksMatchingInApp` is false.
+5. **W3-223** (service.ts:2014-2046). `banStart(ben)`, `banApply(ben@slop)`, `crash` -> ben@peon live, ok, not
+   restricted, not covered: matchable. `bannedNeverMatchable` is false until the staff retry.
+6. **W3-234 / NEW-2** (network.ts:999, network.ts:1365-1367, service.ts:1797). (a) `new2HeldReporterLeavesTest`;
+   (b) `bookDate(o1, slop, ana, ben)`, `ban(ana)`, `liftHold(ana@slop)`, `report(ana -> ben, harassment)` -> ben
+   out of matching. `reporterStandingKept` is false.
+7. **W3-220** (service.ts:1113-1131). (A) a done date ana-ben on slop, `checkIn(fine)`, `tick(1)`,
+   `disclose(o1, peon, ana, ben, harassment)` -> `discloseLost`, nothing filed. (B) `report(ana, slop, ben,
+   report, ambiguous)`, `answerWhoElsewhere(ana@slop, peon)`, `tick(6)` -> the ask lapsed, nothing filed.
+   `everyMetReportFiled` is false.
+8. **W3-236 / SD-074 minor part** (network.ts:1656-1666, service.ts:1977). `sd074MinorReportOneAppTest`: ben@peon
+   matchable after a minor report on slop. `minorSignalFollowsPerson` is false.
+9. **W3-235 / SD-027** (engine slop profile.ts:277, rules.ts:46). `sd027TrustReviewTest`: two strangers block
+   ben; ben is in trust_review with no case. `engineHoldVisible` and `strangersCannotEngineHold` are false.
+10. **W3-237 / SD-442 remainder** (engine slop profile.ts:224-230). `bookDateAt(o1, slop, ana, ben, 20)`,
+    `meet`, `checkIn(fine)` -> the record's slot is -1 (00:00 UTC Tuesday) for a Monday 8 pm date.
+    `slotFromMeeting` is false.
+11. **W3-232 / W3-237 relay ageSignal** (engine relay.ts:355; network.ts relay desk and the service read no
+    `ageSignal`). `bookDate(o1, slop, ana, ben)`, `relaySend(o1, ben@slop, hold, ageSig)` -> ben matchable.
+    `relayAgeSignalReachesAgePolicy` is false.
+
+No new defect ids (Q-safety_trust-W4-n): every counterexample above is an existing item.
+
+### 5.3 Mutations (vacuity checks)
+
+Each mutation was made in a copy of the model outside the repository, then deleted.
+
+| Rule | Mutation | Result |
+|---|---|---|
+| `safetyNoticeImmediate` | `outboundKind` without the `safetyMeta` branch | `sd475HoldNoticeKindTest` fails (the notice is "transactional") |
+| `noShowCountsAbsentOnly` | `recordOf` writes the other person as `by` | `sd222SelfNoShowTest` fails (ana is charged the no-show) |
+| `checkInReportIntended` | none needed | fails on the unchanged model (`w3_219VentingTest`) |
+| `slotFromMeeting` | none needed | fails on the unchanged model (`w3_237SlotZoneTest`) |
+
+### 5.4 Check results
+
+See the table below (filled from `bun run quint:check quint/safety_trust.qnt`).
+
+| Check | Result |
+|---|---|
+| `quint typecheck` | ok |
+| `quint test` (29 earlier and 17 new `run` tests, seed `0x5eed`) | ok: 46 passing |
+| `safety` simulation | expected to fail: the rules of 5.2 fail on the code (counterexamples 1-11) |
+| witnesses (11 earlier, 6 new) | the `bun run quint:check` run had not finished when this was written; the new witnesses (banStopped, liftInFlight, leaveInFlight, probingClosed, oneAppHold, inviteeHeld) are each reached by a `run` test |
+
+`quint/drift.json` was not stamped (a later stage stamps after the merge). No `docs/formal-coverage.md` row was added:
+this is an extension of an existing model, not a new model.
