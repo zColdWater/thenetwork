@@ -47,7 +47,7 @@ Version 0.2 (October 5, 2026). This revision resolves every review comment, adds
 36. Launch requirements we were missing
 37. MVP build plan and milestones
 38. Review decisions and comment resolution log
-39. Growth, network capital, and member ownership
+39. Growth and network capital
 40. Work, friendship, love: the multi-app platform
 41. Experience design: attention budget, plans and continuous conversation
 Appendix A. Example experiences and conversations
@@ -129,7 +129,7 @@ Build a network that becomes increasingly capable of creating useful, surprising
 | 1. Create conditions, not outcomes. | The Network can create a reason to meet; it cannot promise friendship, romance, fulfillment, or success. |
 | 2. Human attention is scarce. | AI, search, local knowledge, and existing resources should be exhausted before asking people for help unless the human interaction is itself the value. This also applies to learning about members: use what the member has connected or already said before asking them a question. |
 | 3. Nothing happening is a valid state. | The product should be willing to say "nothing needs your attention right now." Silence increases trust in interruptions. |
-| 4. Belonging is not subscription-gated. | No recurring consumer membership fee. A member's place in the Network is not conditional on paying monthly dues. (A voluntary paid governance membership, discussed in Sections 19 and 27 (earlier idea, superseded by 39.4), would confer voice only, never belonging or social priority.) |
+| 4. Belonging is not subscription-gated. | No recurring consumer membership fee. A member's place in the Network is not conditional on paying monthly dues. (A voluntary paid governance membership, discussed in Sections 19 and 27 (earlier idea, not planned), would confer voice only, never belonging or social priority.) |
 | 5. Money buys capacity, never people. | Commercial spending can fund venues, transport, tools, professional work, childcare, materials, or experiences; it cannot buy social rank or obligation. |
 | 6. Capital is multidimensional. | Time, attention, social reach, skill, space, knowledge, and money are different forms of capacity and must not be collapsed into one score. Internally the system does keep contextual estimates (for example, reliability for a type of commitment, or confidence in a claimed skill) on an open, extensible ontology. These are never collapsed into one universal score and are never shown to members. |
 | 7. Declining is healthy behavior. | A no protects the network from resentment and burnout. Declining an opportunity never reduces reliability. |
@@ -589,7 +589,7 @@ Hard constraint: no recurring consumer membership fee. Belonging is free once in
 5. Create the Network Commons with transparent inflows/outflows once revenue is meaningful.
 6. Only later evaluate institutional contracts and ownership/governance mechanisms at scale.
 # 19. Network Commons and capital regeneration
-Status (v0.2): not MVP. Abuse risk is real and must be tested at small scale first. One governance direction discussed earlier (earlier idea, superseded by 39.4): an open-source non-profit governed by members who choose to pay a membership fee; fees first fund the app and inference, and any surplus flows into the Commons pool. DAO governance experiments are worth studying for what to copy and what to avoid. Another idea for later: members contribute compute (with PII scrubbed so contributors cannot see what is computed) in exchange for points or ownership in the network. The current ownership direction is in Section 39.4: after the MVP, a member-owned protocol and treasury, with treasury decisions made through decision markets.
+Status (v0.2): not MVP. Abuse risk is real and must be tested at small scale first. One governance direction discussed earlier (earlier idea, not planned): an open-source non-profit governed by members who choose to pay a membership fee; fees first fund the app and inference, and any surplus flows into the Commons pool. DAO governance experiments are worth studying for what to copy and what to avoid. Another idea for later: members contribute compute (with PII scrubbed so contributors cannot see what is computed) in exchange for network capital (an internal resource only, 39.2). Members do not own the network through network capital (39.4).
 The Network Commons is a proposed pool of financial capital dedicated to removing barriers and increasing future shared capability. It is not a loyalty program and not a pool that members can cash out based on popularity.
 ## 19.1 Example uses
 - Transport for a member who otherwise cannot participate.
@@ -856,7 +856,7 @@ A purely technical founding plan is insufficient. The product is a social system
 | Can sponsors name the experiences they fund? | Yes if clearly labeled and if funding adds real capacity; no control over private member targeting. | Partner pilot. |
 | How much external-network information may be stored? | Minimal member-described relationship metadata until the external person consents. | Before friend-of-friend pilot. |
 | How should model vendors be selected? | Task-based evaluation; vendor-neutral gateway. | Implementation. |
-| Voluntary paid governance membership? (earlier idea, superseded by 39.4) | Was under discussion: belonging stays free; a paid governance membership could fund inference and the Commons and confer voice, never social priority. | Before any monetization (post-MVP). |
+| Voluntary paid governance membership? (earlier idea, not planned) | Was under discussion: belonging stays free; a paid governance membership could fund inference and the Commons and confer voice, never social priority. | Before any monetization (post-MVP). |
 | No-show consequences | MVP: one forgiven no-show, then held from group and time-sensitive opportunities until a lower-stakes commitment is completed. Refundable deposits are a post-MVP experiment. | Revisit after first 100 completed meetups. |
 | ID verification | Not required for MVP members (vouch + phone + age attestation (13+); under-18 members are single-player only). Required for hosts of home-based events when that ships. (Section 40.5: slop.date has no ID or liveness check for now; phone login is the identity check.) | Before home hosting. |
 | Profiles of non-members | No. No scraped or third-party profiles; growth is invite and vouch only. | Decided. |
@@ -936,14 +936,13 @@ Status (2026-10-08): the first pilot is slop.date in New York City, on the share
 | Payments, balances, splitting costs, paid professional services | Business model deferred (18). | Opportunity commercial_mode, Stripe in Eliza Cloud |
 | Refundable no-show deposits | Needs payments and careful testing. | Reliability evidence, attendance records |
 | Network Commons, sponsorship, partner inventory, institutional contracts | Deferred (18-19). | Opportunity object, world knowledge |
-| Governance, paid governance membership, member ownership, protocol tokens, and decision-market governance | Decide after product-market fit; needs legal review and token design first (39.4). | Admin metrics, audit log, network capital ledger |
+| Governance and paid governance membership | Decide after product-market fit; needs legal review first. Member ownership, protocol tokens and decision-market governance are removed (39.4). | Admin metrics, audit log, network capital ledger |
 | ID verification | MVP relies on vouch, phone, and age attestation (13+). Needed first for home hosting. slop.date has no ID or liveness check for now; phone login is the identity check (40.5). | Safety subsystem |
 | Home-hosted events, childcare, money custody, regulated services | High risk (17.5). Home hosting comes after light-touch opportunities prove out (39.3). | Safety classes |
 | Learned ranking models and learned joint embeddings | Need labeled outcomes from MVP first. | Review labels, outcome data, matching logs |
 | Graph topology optimization, capability-coverage modeling | Need scale. | Graph analytics in admin |
 | Private progression, roles, gamification | Validation gate (20.3). | Feedback and edge history |
 | Cities beyond New York City, San Francisco included (slop.date markets: Section 40.5) | Expansion gates (25.6). | Multi-city presence model |
-| Spendable network capital (time-bank style requests between members) | Needs the internal ledger, fairness and gaming results, and legal review first (39.2). | Network capital ledger, effort tiers |
 | Borrowing, lending, rental, and a marketplace | Goods changing hands need custody, disputes, and safety design (39.3). | Opportunity object, reliability evidence |
 | Group purchases and collective buying | Needs payments and money custody (18, 39.3). | Intents, small-group composition |
 | Live matching and sends for peon.biz and friends.help | slop.date launches first. Their sites are on Pages, but their matching and sends run locally until the founder approves; their packs already pass their sim gates (40.6). | App packs, shared platform, local sim worlds |
@@ -1574,7 +1573,7 @@ This section records the decisions made while resolving the October 4-5, 2026 re
 | Ontology flexibility and travel | Small generic core (members, facets, intents, presence, edges) with time-bounded presence for multi-city members ("if you are in SF this weekend"). | 13.1, 29 F26 |
 | Bluetooth/proximity idea | Interesting for festivals and large events; post-MVP. | 10.1, 28.4 |
 | Gift mode | Help given freely with no fee. Voluntary donations by members who get value are patronage, separate from gift mode. | B.1, 18 |
-| Commons and governance | Not MVP. Earlier direction (superseded by 39.4): open-source non-profit governed by members who choose to pay a governance membership; fees first fund the app and inference, surplus to the Commons; learn from DAO successes and failures. | 19, 27 |
+| Commons and governance | Not MVP. Earlier direction (not planned): open-source non-profit governed by members who choose to pay a governance membership; fees first fund the app and inference, surplus to the Commons; learn from DAO successes and failures. | 19, 27 |
 | Business model | Ignored for MVP; focus on growth. Members settle money outside the Network. Later: accounts, balances, splitting, paid services via Stripe with transparent low fees. | 18, 28.4 |
 | Tech stack | Eliza backend, shared agent, Eliza Cloud infrastructure, eliza.app web, Capacitor app; no sandbox agents; asynchronous engine over Postgres. | 22, 30, 31 |
 | pgvector and learned representations | pgvector for MVP; a learned, JEPA-like joint embedding trained on outcomes is a post-MVP upgrade. (Comment read as "maybe a CLIP- or JEPA-like model here"; please correct if something else was meant.) | 22.1, 33.11 |
@@ -1606,9 +1605,9 @@ This section records the decisions made while resolving the October 4-5, 2026 re
 | Introductions | Encourage members to introduce people; it builds social capital. | 6.1, A.3 |
 | Channels | Blooio (iMessage) and Twilio (SMS/voice) first; then Telegram, WhatsApp, Signal; later group chats. | 22.1, 22.4, 28.4 |
 | Login and agent verification | All login is by phone number and a text-message code; no passwords, email, or magic links. Agents using the skill or connector verify the member's number by texted code and receive a scoped, revocable agent key, kept for the session in chat assistants or stored locally by agents on a computer. | 9.1, 11.1, 11.5, 22.2, 29.3, 32.1, B.3 |
-| Member ownership | Post-MVP: a member-owned protocol and treasury. Tokens are an ownership stake, held virtually against the member's phone and agent with an open claim to self-custody; gasless voting; Umia-style decision markets for treasury decisions. Amounts decided by the founding team at launch; on chain when the time is right. | 1, 18, 19.4, 28.4, 39.4 |
+| Member ownership | Removed (founder, 2026-11-23). No member-owned protocol, treasury, tokens or decision markets. Network capital is never converted into ownership. | 39.4 |
 | Founders are members | Everyone, including the founders, is just a member. No founding cohort or special status. Invites are vouches. | 8.1, 39 |
-| Network capital | MVP-lite: internal ledger, effort tiers, vouch capacity, and a private "what you've built" view. No visible score, no cash value, no promised conversion. A spendable currency comes later. | 28.3, 28.4, 39.2 |
+| Network capital | MVP-lite: internal ledger, effort tiers, vouch capacity, and a private "what you've built" view. No visible score, no cash value, never transferable, never converted into ownership. | 28.3, 28.4, 39.2 |
 | MVP opportunity mix | Favor light-touch opportunities: asks, work intros, light help, public-venue groups, plans and crews, events, and information missions. Home hosting, borrowing, rental, marketplace, and group buying come later. | 28.4, 39.3 |
 | Three apps on one network (2026-10-08) | Work, friendship and love: peon.biz, friends.help and slop.date, all powered by The Network. One engine with app packs, one database, one admin panel, phone-verified login. Each app has its own onboarding, ontology, landing page and agent persona. A person can join one app or several. | 1, 28, 40.1-40.4 |
 | App names and ids (2026-10-08) | peon.biz (peon), friends.help (friends; renamed from buddies.nyc), slop.date (slop). The Network itself (ntwrk) is the umbrella. | 40.2 |
@@ -1618,7 +1617,7 @@ This section records the decisions made while resolving the October 4-5, 2026 re
 | Ages across apps (2026-10-08) | Minimum age 13. Members aged 13-17 may join every app but are never matched or connected to anyone. Matching is 18+ everywhere. | 28.3, 40.3 |
 | Compliance (2026-10-08) | Not a launch blocker for now. The existing safety guards stay. Legal and compliance items (for example NYC LL144, dating-safety notices, 10DLC) are a deferred backlog, not gates. | 28.5, 36.1, 36.2, 40.7 |
 | Cross-app privacy (2026-10-08) | Dating membership and data are never visible to the other apps by default. Only a base profile crosses apps, with consent. Blocks apply across every app. | 40.3 |
-| Earlier decisions stay (2026-10-08) | The attention budget (lunchtime learned send times, always probe first, only initial invites count against the cap, booked-plan reveal), plans with a separate plan allowance, crews after one great plan, network capital MVP-lite and post-MVP ownership apply in every app. | 39, 40.4 |
+| Earlier decisions stay (2026-10-08) | The attention budget (lunchtime learned send times, always probe first, only initial invites count against the cap, booked-plan reveal), plans with a separate plan allowance, crews after one great plan, network capital MVP-lite apply in every app. | 39, 40.4 |
 | Photos and attractiveness rating (2026-10-08) | Members upload photos. A private rater (Workers AI "Clef" plus a learned scoring layer) rates face, body, overall and body type for slop.date matching: a soft similarity term plus body-type preference. Scores are never shared, shown, used in member-facing text or logged. Rated only when the lowest stated age is 18+ (no ID check; unknown age fails closed, 40.3); members aged 13-17 and unknown ages are never rated. A weekly bias monitor reports outcome ratios by group. | 40.5 |
 | No photo in the probe (2026-10-11) | No member sees another member's photo or profile in a probe or profile view. Ratings stay private and help pair people of similar attractiveness. A member may choose to send a photo through the relay thread; that voluntary item still uses the relay consent and review path. | 40.5, 40.9 |
 | Exchange through the agent (2026-10-08) | After a match, messages, numbers and photos pass only through the agent ("send them my number"), with consent per item. Each side learns only what the agent tells them: the other's first name and what they chose to share. | 40.5 |
@@ -1634,15 +1633,19 @@ This section records the decisions made while resolving the October 4-5, 2026 re
 
 
 Comments that were agreement or emphasis (for example on contraction, activation energy, silence as a valid state, anti-metrics, examples, and LGTMs) were acknowledged and closed without changes; the text they endorsed is unchanged.
-# 39. Growth, network capital, and member ownership
-Status (2026-10-07): network capital has an MVP version and a later version; member ownership is post-MVP. Everyone, including the founders, is just a member, with no founding cohort or special status. Invites are vouches.
+# 39. Growth and network capital
+Founder decision (2026-11-23): network capital is only an internal resource. It scores members and gives them more capacity and preferential service. It is not ownership, it has no cash value, it is never transferable or spendable between members, and it never converts into tokens, equity or any other stake. The member-ownership direction (earlier 39.4: protocol, treasury, tokens, decision markets) is removed.
+
+Status (2026-10-07, ownership removed 2026-11-23): network capital has an MVP version and a later version. Everyone, including the founders, is just a member, with no founding cohort or special status. Invites are vouches.
 ## 39.1 Framing
 The goal is to grow the network: more members, but above all more capability, meaning more people who can help, more skills and knowledge within reach, more recurring groups, more warm paths, more cities, and more trust. Introductions are one way that capability gets used; they are not the product.
-The pitch is a network its members build and, after the MVP, own, not "an AI that introduces you to people". Each member's agent puts the network's capital to work for them, and each member grows that capital by taking part.
+The pitch is a network its members build, not "an AI that introduces you to people". Each member's agent puts the network's capital to work for them, and each member grows that capital by taking part.
 Capital comes in many forms (Section 5), and they convert into each other more liquidly here than through money: an hour of advice becomes a warm introduction, a vouch becomes a new member who can teach something, and showing up reliably becomes trust that opens better opportunities. Money markets handle these conversions badly; The Network handles them with an agent and a shared ledger.
 ## 39.2 Network capital
 ### 39.2.1 What it is and is not
-Network capital (NC) is a member's account of what they have put into and taken out of the Network: the internal unit for deciding where to spend the Network's scarce resources (AI effort, reviewer time, invites, proactive reach). It is earned by growing the network and lost through behavior that damages it.
+Network capital (NC) is a member's account of what they have put into and taken out of the Network: the internal unit for deciding where to spend the Network's scarce resources (AI effort, reviewer time, invites, proactive reach). It is earned by growing the network and lost through behavior that damages it. Its only value is inside the Network: it scores the member and gives them more capacity and preferential service.
+
+It is not ownership. It has no cash value, it cannot be transferred, spent between members or redeemed, and it never converts into tokens, equity, governance rights or any other stake.
 It is not a public score, a rank, or a measure of worth. It never buys access to a specific person or changes how you appear or rank for others. Principles 5 and 6 still apply: money buys capacity, never people, and no single score is shown to others.
 ### 39.2.2 Earning and losing
 
@@ -1675,7 +1678,6 @@ NC never gives priority for a specific person, ranking in anyone else's results,
 | Makes vouching mean something | An invite puts a bounded stake behind someone, so quality matters more than quantity. |
 | Principled basis for AI spend | Spend more AI where it creates more value. |
 | Rewards non-monetary contribution | Time, attention, knowledge, and introductions count, and help given in one form can be returned in another. |
-| Bridge to ownership | NC history records who built the network, an input the founding team can use for ownership post-MVP (no promised conversion). |
 
 
 ### 39.2.6 Risks and mitigations
@@ -1689,7 +1691,7 @@ NC never gives priority for a specific person, ranking in anyone else's results,
 | Vouch liability chills inviting | Bounded stake, lost only for serious confirmed violations within about 90 days. |
 | Crowding out kindness; loss of dignity in receiving | No per-act pricing shown; gifts stay gifts (18.1); Receiving and safety support never depend on NC; asking never costs NC. |
 | Coercion to say yes | Only follow-through on accepted commitments counts. |
-| Legal (security, taxable reward, stored value) | In the MVP, NC is non-transferable, has no cash value, and carries no promise of conversion; securities and tax counsel before any link to tokens. |
+| Legal (security, taxable reward, stored value) | NC is non-transferable, has no cash value, and never converts into tokens, equity or money. Any change to this needs legal review first. |
 | Privacy, inference, and minors | Entries visible only to the member and audited staff; no private facts in entries (17.2); under-18s excluded. |
 
 
@@ -1697,10 +1699,10 @@ NC never gives priority for a specific person, ranking in anyone else's results,
 
 | MVP | Later |
 |---|---|
-| Internal ledger built from events the MVP already records (vouches, attendance, feedback, help confirmations, organizing) | NC as a spendable currency between members: time-bank style requests, with the helper earning what the requester spends |
-| Effort tiers, vouch capacity, and organizing reach driven by NC | Visible balance, categories, and transfers |
-| Private "what you've built" view | NC history as one input to ownership allocation (founding team decides) |
-| Bounded vouch stake; flake and abuse deductions with grace rules | Commons-funded missions that pay out NC |
+| Internal ledger built from events the MVP already records (vouches, attendance, feedback, help confirmations, organizing) | More levers that give more capacity or service to the member (never ownership or a currency) |
+| Effort tiers, vouch capacity, and organizing reach driven by NC | Visible balance and categories (to the member only) |
+| Private "what you've built" view |  |
+| Bounded vouch stake; flake and abuse deductions with grace rules |  |
 | Simulation of NC dynamics, gaming, and inequality before launch |  |
 
 
@@ -1717,33 +1719,12 @@ The MVP favors opportunities that need little physical resource, money, or risk 
 | Plans and recurring crews at public venues (run club, climbing, dinner) | Creates repeat relationships with no hosting burden | Childcare and care swaps |
 | Event co-attendance, including volunteer events | Missions with zero resource draw | Partner inventory and unused-capacity deals |
 | Vouch invites plus the Network's needs list | Growth with quality | The Commons and funded missions |
-| Monthly all-member gathering per city | Already MVP | The ownership protocol |
+| Monthly all-member gathering per city | Already MVP |  |
 | Information missions: curate or map something useful ("quiet cafes to work from in the Mission") | Builds shared knowledge |  |
 
 
-## 39.4 Member ownership (post-MVP)
-### 39.4.1 Direction
-After the MVP, The Network becomes a protocol whose treasury and governance are owned by its members, founders included. Tokens represent an ownership stake in the protocol and treasury; amounts are decided by the founding team at launch. It goes on chain when the time is right; nothing is on chain in the MVP.
-### 39.4.2 Virtual ownership and the open claim
-- Virtual ownership by default: each member's stake is held for them, tied to their phone number and Network account. No wallet, seed phrase, or gas.
-- Open claim: any member can claim their tokens and self-custody them at any time, subject to eligibility checks.
-- Governance from the phone or the agent: members direct their voting power by text or through their agent. The agent acts only on explicit authorization for each decision, or on a standing instruction the member set and can revoke.
-- Gasless voting: votes are signed and relayed, so members never pay transaction fees.
-### 39.4.3 Decision markets for the treasury
-Treasury allocation and major protocol decisions use Umia-style decision markets: participants trade on conditional outcomes ("if this passes, what happens to metric M?"), and the forecast informs or decides the result. Metrics are network-health measures from Section 21 (V14, repeat relationships, capability coverage, safety) plus treasury health. Members take part with their virtual holdings, from their phone or agent.
-### 39.4.4 Guardrails
-- Belonging stays free. Ownership never buys social priority, matching rank, or access to people (18.1, 18.3).
-- Legal first. Securities, tax, money transmission, and consumer protection review per jurisdiction before launch. Ownership and claims are for members 18 and over.
-- Identity and security. Phone control is exposed to SIM swaps, so claims and large votes need stronger authentication, cooling-off periods, and recovery.
-- Agent authority. The agent votes only within the member's explicit instructions; every agent vote is logged and visible to the member.
-- Anti-capture. Caps, delegation limits, and vesting against concentration and vote buying; safeguards against market manipulation.
-- Data. Governance never exposes personal or graph data; proposals and markets use aggregate metrics only.
-- Relationship to NC. NC history may inform allocation, with no promised conversion rate; MVP NC has no cash value.
-### 39.4.5 Sequence
-1. MVP: no ownership mechanics; record the NC ledger.
-2. After product-market fit: legal structure, token design, and allocation decided by the founding team; build the virtual ownership ledger and gasless voting.
-3. Launch governance with decision markets on a small part of the treasury; expand as safeguards prove out.
-4. Open claims and self-custody once custody, compliance, and recovery are ready.
+## 39.4 Member ownership (removed)
+Removed (founder, 2026-11-23). The Network has no member-owned protocol, treasury, tokens, on-chain stake, open claim or decision-market governance, and none is planned. Network capital is an internal resource only (39.2) and is never converted into ownership.
 ## 39.5 Metrics
 Added to Section 21.2:
 - Network capability created per city: new members who activate, new recurring crews, new skills and knowledge within reach, newly connected clusters.
@@ -1815,7 +1796,7 @@ Core invariants no pack can loosen (a pack may only tighten them):
 Per pack: ontology (entities, roles, lanes, opportunity kinds, typed constraints, never-used attributes), hard filters, generators and retrieval, scoring and selection, consent flow, attention settings and copy, judge rubric and explanations, geo model, plans and capital settings, and a sim pack (personas with hidden truth, oracle, adversaries, scenarios, launch gates).
 networkPack is today's engine behind the pack interface, with byte-identical golden replays of engine, attention, plans, capital and judge results.
 Conformance suite. Every pack passes one shared suite before it runs anywhere: age, blocks and holds, consent order, leaks with canaries, protected-attribute invariance, determinism, judge cannot undo filters, attention caps and quiet hours, geo (mutual radius, bucketed distances, no coordinates) and cross_app_leak = 0. Each pack must also pass its own simulation launch gates (40.8).
-Carried over to every app. The attention budget: rolling sends at a learned send time (default lunchtime, 12:00 local, then learned from replies); always probe first; only initial invites count against the cap (2 per 7 days in Normal); the reveal is the booked plan. Plans with a separate plan allowance (1 initial plan invite per 7 days); crews after one great plan; network capital MVP-lite; post-MVP member ownership (39). A person-level cap of at most 3 proactive messages a day across all apps is built (40.3).
+Carried over to every app. The attention budget: rolling sends at a learned send time (default lunchtime, 12:00 local, then learned from replies); always probe first; only initial invites count against the cap (2 per 7 days in Normal); the reveal is the booked plan. Plans with a separate plan allowance (1 initial plan invite per 7 days); crews after one great plan; network capital MVP-lite (39). A person-level cap of at most 3 proactive messages a day across all apps is built (40.3).
 ## 40.5 slop.date MVP
 Preferences. Stated preferences are hard filters only: gender and seeking, age range, radius or cities, intent and named dealbreakers. Profiles do not predict pair chemistry, so the engine learns from probe answers and post-date feedback, and never markets "compatibility science".
 Gender and orientation. Matching gender, an optional identity description and the seeking set are stored separately. Both members must be in each other's seeking set, and selection works for non-bipartite pools. Read a clear seeking answer as stated. If a woman or man remains unclear after two seeking questions, default the seeking set to straight, repeat it in the read-back and allow correction. Never default a nonbinary member. This is the founder's October 11 policy.

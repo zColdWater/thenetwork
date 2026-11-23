@@ -1,6 +1,6 @@
 # Network capital (NC) ledger, MVP-lite: build and pre-launch simulation (2026-10-08)
 
-Spec: [docs/design/2026-10-07-growth-capital-ownership.md](../design/2026-10-07-growth-capital-ownership.md), section 2 ("the doc"), and PRD Section 39.2. **No LLM calls, $0.** Tests run with API keys unset and without `LIVE_TESTS`. The text is hand-written. The tables are copied from the generated output of the commands below.
+Spec: [docs/design/2026-10-07-growth-capital.md](../design/2026-10-07-growth-capital.md), section 2 ("the doc"), and PRD Section 39.2. **No LLM calls, $0.** Tests run with API keys unset and without `LIVE_TESTS`. The text is hand-written. The tables are copied from the generated output of the commands below.
 
 ## Result in one paragraph
 
